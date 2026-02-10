@@ -30,6 +30,37 @@ Read all reference files before starting any phase.
 - If fetching fails or content is truncated, ask the user to provide a downloaded file instead.
 - Always check whether inline citation markers (e.g., `[1]`, `[2]`) are present in the fetched text. If missing, warn the user that citation placement may need manual review, or request the original document.
 
+### Google Docs — Image Extraction
+Google Docs text exports strip all images. To get the figures:
+1. **Try the HTML export first:** Replace `/edit` (or anything after the doc ID) with `/export?format=html`. Fetch this HTML and extract all `<img>` src URLs — Google embeds images as `googleusercontent.com` links.
+2. **Download each image** using `curl -L -o <path> <url>` into the local `figures/` directory.
+3. If the HTML export is blocked or images are base64-encoded, ask the user to either:
+   - Share the doc with "Anyone with the link" view access, or
+   - Download as .docx (which bundles images) and provide the local file instead.
+
+### Image/Figure Extraction (Required — All Source Types)
+**Never skip figures.** If the source document contains images, charts, or diagrams, the output must include them. This applies regardless of source type (URL, Google Doc, .docx, .pdf, pasted content).
+
+**From a website URL:**
+1. Use WebFetch to identify all image URLs on the page (ask for `<img>` src attributes and any figures/charts).
+2. Download each image using `curl -L -o <path> <url>` to a local `figures/` directory alongside `main.tex`.
+
+**From a Google Doc:**
+1. Follow the Google Docs image extraction steps above (HTML export).
+
+**From a local .docx file:**
+1. Unzip the .docx (`unzip -o file.docx -d docx_extracted`) — images are in `docx_extracted/word/media/`.
+2. Copy them into the `figures/` directory with descriptive names.
+
+**From a local .pdf file:**
+1. Use the Read tool to view the PDF — it will display embedded images visually.
+2. If images need to be extracted as files, use `pdfimages` (from poppler: `brew install poppler`) or ask the user to provide the images separately.
+
+**For all source types:**
+- Name files descriptively (e.g., `fig1-cost-decline.jpg`, `fig2-adoption-rates.png`).
+- Reference them in LaTeX with `\includegraphics` using relative paths (`figures/filename.ext`).
+- If an image truly cannot be obtained after trying all methods, **then** fall back to a placeholder `\fbox` and flag it clearly to the user — but this should be a last resort, not the default.
+
 ---
 
 ## Phase 1: Audit
@@ -71,6 +102,10 @@ Include inline proposals for abstract, keywords, and any rewritten cross-referen
 
 End with a summary count of issues by category.
 
+**Important — end the audit with this notice:**
+
+> **Please read through the full audit above, including the final notes at the bottom.** Some items may need your input, and I'll flag anything I wasn't fully confident about (e.g., truncated content, ambiguous citations, missing figures). If something looks off or incomplete, let me know before we move on.
+
 **Wait for user confirmation before proceeding to Phase 2.**
 
 ---
@@ -106,7 +141,13 @@ For each issue, in order of importance:
 **Acknowledgments:** Ask user if they need to acknowledge funding, collaborators, etc.
 
 ### Output
-After all fixes are approved, confirm the full list of changes and proceed to Phase 3.
+After all fixes are approved, confirm the full list of changes.
+
+**Important — end the prep summary with this notice:**
+
+> **Before I generate the LaTeX, please scroll through everything above one more time.** I've flagged any areas where I'm uncertain or where content may be incomplete (look for items marked with caveats or questions). If anything needs correcting, now is the best time — it's much easier to fix before generation than after. Once you confirm, I'll proceed to Phase 3.
+
+Proceed to Phase 3 only after the user confirms.
 
 ---
 
@@ -118,7 +159,7 @@ After all fixes are approved, confirm the full list of changes and proceed to Ph
 1. **Self-contained.** No external .bib files, no external .sty files beyond standard LaTeX packages. Everything in one file.
 2. **Prism-compatible.** Must compile in OpenAI Prism without errors. Use only packages available in standard TeX Live.
 3. **Arxiv conventions.** Follows standard arxiv paper formatting.
-4. **Complete content.** All text, tables, figures (as placeholders), and references from the source document.
+4. **Complete content.** All text, tables, figures (with actual downloaded images), and references from the source document.
 
 ### Document Structure
 Follow the template structure in `references/latex-templates.md`:
@@ -145,7 +186,7 @@ Follow the template structure in `references/latex-templates.md`:
 
 **Tables:** Use `booktabs` (`\toprule`, `\midrule`, `\bottomrule`). No vertical lines. Use `tabularx` or `longtable` for wide/long tables.
 
-**Figures:** Use `\includegraphics` with placeholder filenames like `figures/fig1.png`. Add clear comments about what image to upload.
+**Figures:** Use `\includegraphics` with the actual downloaded image files (see "Image/Figure Extraction" in Input Handling). Only use placeholder `\fbox` blocks as a last resort for images that could not be downloaded, and clearly flag these to the user.
 
 **Math:** Use `equation`, `align`, `gather` environments. Number important equations.
 
@@ -168,7 +209,7 @@ Follow the template structure in `references/latex-templates.md`:
    - `~/Downloads/main.tex` — for pasting into Prism if they want to edit
    - `~/Downloads/main.pdf` — ready-to-use compiled PDF
 4. Follow with Prism instructions from `references/prism-guide.md` (for users who want to modify the LaTeX).
-5. Note any figures the user needs to upload separately (Prism only — Tectonic compilation will show figure placeholders).
+5. Note any figures that could NOT be downloaded and need manual upload (should be rare — most figures should already be included).
 
 ### Quality Checks Before Output
 - Every `\begin` has a matching `\end`
