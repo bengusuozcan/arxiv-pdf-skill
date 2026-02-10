@@ -160,9 +160,15 @@ Follow the template structure in `references/latex-templates.md`:
 **Special characters:** Escape everything properly. Use `--` for en-dash, `---` for em-dash, and LaTeX quote marks.
 
 ### Output
-1. **Write the file to disk** (default: `~/Downloads/main.tex`). The file will be too large for terminal output.
-2. Follow with Prism paste instructions from `references/prism-guide.md`.
-3. Note any figures the user needs to upload separately.
+1. **Write `main.tex` to disk** (default: `~/Downloads/main.tex`). The file will be too large for terminal output.
+2. **Compile to PDF** using Tectonic: run `tectonic main.tex` from the output directory. This produces `main.pdf` alongside `main.tex`.
+   - If Tectonic is not installed, suggest `brew install tectonic` and fall back to Prism-only instructions.
+   - If compilation fails, report the error, attempt to fix the LaTeX, and retry. Common fixes: missing package, unescaped special character, mismatched braces.
+3. **Report both files** to the user with file sizes:
+   - `~/Downloads/main.tex` — for pasting into Prism if they want to edit
+   - `~/Downloads/main.pdf` — ready-to-use compiled PDF
+4. Follow with Prism instructions from `references/prism-guide.md` (for users who want to modify the LaTeX).
+5. Note any figures the user needs to upload separately (Prism only — Tectonic compilation will show figure placeholders).
 
 ### Quality Checks Before Output
 - Every `\begin` has a matching `\end`

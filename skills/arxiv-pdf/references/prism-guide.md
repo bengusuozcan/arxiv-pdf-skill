@@ -1,17 +1,32 @@
-# Prism Paste-and-Compile Guide
+# Output and Compilation Guide
 
-Instructions for compiling LaTeX in OpenAI Prism. Include these at the end of Phase 3 output.
+This skill produces two output files. Include these instructions at the end of Phase 3 output.
 
 ---
 
-## Standard Instructions (copy-paste to user)
+## Output Files
 
-### How to compile in Prism
+Present this to the user after generating:
+
+```
+Your files are ready:
+
+  main.pdf  — Compiled PDF, ready to use
+  main.tex  — LaTeX source, paste into Prism if you want to edit
+
+Both saved to ~/Downloads/
+```
+
+---
+
+## Prism Instructions (for editing the LaTeX)
+
+If you want to modify the LaTeX before finalizing:
 
 1. **Open Prism:** Go to [prism.openai.com](https://prism.openai.com)
 2. **Create a new project:** Click the **+** button to start a new project
 3. **Clear the editor:** In `main.tex`, select all with **Cmd+A** (Mac) or **Ctrl+A** (Windows/Linux), then delete
-4. **Paste the LaTeX:** Paste the entire LaTeX code block above into the editor
+4. **Paste the LaTeX:** Open `~/Downloads/main.tex`, copy the contents, and paste into the Prism editor
 5. **Compile:** Click the **Compile** button (or press the compile shortcut)
 6. **Review:** Check the PDF preview for any formatting issues
 7. **Upload figures (if any):** For each figure placeholder in the code:

@@ -6,9 +6,13 @@ Start with this message:
 
 ---
 
-**arxiv-pdf: Publication to LaTeX converter**
+**arxiv-pdf: Publication to arxiv-ready PDF**
 
-This will generate a complete `main.tex` you can paste into [Prism](https://prism.openai.com) and compile to an arxiv-ready PDF. No external files needed — everything in one document.
+You'll get two files:
+- **`main.tex`** — paste into [Prism](https://prism.openai.com) if you want to tweak the LaTeX before compiling
+- **`main.pdf`** — compiled PDF, ready to go
+
+No external files needed — everything in one self-contained document.
 
 **What I need from you:**
 
@@ -51,11 +55,17 @@ Run **Phase 2: Prep** as defined in SKILL.md:
 - Batch related fixes together
 - Wait for user approval on each batch
 
-## Step 5: Generate LaTeX
+## Step 5: Generate LaTeX and PDF
 
 Run **Phase 3: Generate** as defined in SKILL.md:
 - Produce complete, self-contained `main.tex`
-- Save to `~/Downloads/main.tex` (or ask user for preferred path)
-- End with Prism paste instructions
+- Save to `~/Downloads/main.tex`
+- Compile to PDF using `tectonic main.tex` (run from `~/Downloads/`)
+- Verify `main.pdf` was created successfully
+- Report both file paths and sizes to the user
 
-**Important:** Write the file to disk so the user can open and paste it. Don't just show it in chat — the file will be too large to copy from terminal output.
+End with:
+1. Confirmation of both output files
+2. Prism instructions (for users who want to edit the LaTeX first)
+
+**Important:** Write the `.tex` file to disk first — don't show it in chat. Then compile. If Tectonic is not installed, fall back to Prism-only instructions and suggest `brew install tectonic` for next time.
